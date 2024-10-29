@@ -17,7 +17,7 @@ export default function HomePage() {
   return (
     <>
       <section className="flex flex-col w-full items-center justify-center gap-4 md:py-10">
-        <section className="flex flex-col gap-4">
+        <section className="flex w-full flex-col gap-4">
           <div className="inline-block max-w-xl text-center justify-center">
             <span className={title()}>Mejora y&nbsp;</span>
             <span className={title({ color: "teal" })}>Optimiza&nbsp;</span>
@@ -57,10 +57,14 @@ export default function HomePage() {
             </div>
           </div>
         </section>
-        <section ref={datosRef} id="datos" className="flex flex-col gap-4">
+        <section
+          ref={datosRef}
+          id="datos"
+          className="flex w-full flex-col gap-4"
+        >
           {data.length ? (
             <>
-              <div className=" max-w-7xl flex flex-col pt-24 gap-4">
+              <div className="w-full flex flex-col pt-24 gap-4">
                 <h2 className="text-2xl font-semibold">Tiempo de servicio</h2>
                 <TimeServiceChart />
               </div>

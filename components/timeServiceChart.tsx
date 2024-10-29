@@ -20,18 +20,12 @@ export const TimeServiceChart = () => {
   ];
 
   return (
-    <div>
-      <ResponsiveContainer width="100%" height={550}>
+    <div className="w-full h-[400px] md:h-[550px]">
+      <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         >
-          <defs>
-            <linearGradient id="neonGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#0ff" stopOpacity={0.8} />
-              <stop offset="100%" stopColor="#0d9488" stopOpacity={0.8} />
-            </linearGradient>
-          </defs>
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis
             dataKey="tiempoServicio"
@@ -43,7 +37,7 @@ export const TimeServiceChart = () => {
           />
           <YAxis
             label={{
-              value: "Número de automóviles",
+              value: "Automóviles",
               angle: -90,
               position: "insideLeft",
             }}

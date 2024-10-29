@@ -1,0 +1,11 @@
+key,tipoAutomovil,nBomba,horaInicio,horaFinalizacion,tipoPago,tipoProducto,litros
+1,Sedan,1,10:00,10:30,Efectivo,Regular,10
+2,Sedan,2,10:00,10:30,Efectivo,Regular,10
+3,SUV,3,11:00,11:20,Tarjeta,Premium,15
+4,Sedan,4,11:30,11:50,Efectivo,Diesel,12
+5,Camioneta,5,12:00,12:25,Tarjeta,Regular,20
+6,SUV,1,12:30,12:50,Efectivo,Premium,18
+7,Camioneta,2,13:00,13:20,Tarjeta,Diesel,25
+8,Sedan,3,13:30,13:50,Efectivo,Regular,10
+9,SUV,4,14:00,14:30,Tarjeta,Premium,22
+10,Camioneta,5,14:30,15:00,Efectivo,Diesel,30

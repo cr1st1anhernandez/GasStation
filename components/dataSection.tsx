@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { Chart } from '@/components/chart'
 import PaginationTable from '@/components/paginationTable'
 import { dataColumns, frequencyColumns } from '@/components/primitives'
+import GasStationSimulation from '@/components/simulation'
 import { generateFrequencyDistribution } from '@/data/functions'
 import { Data } from '@/types'
 
@@ -153,6 +154,7 @@ export default function DataSection({ data, dataRef }: DataSectionProps) {
           ) : (
             <p className="text-gray-600">No se han encontrado datos válidos</p>
           )}
+          <GasStationSimulation />
         </>
       ) : null}
     </section>

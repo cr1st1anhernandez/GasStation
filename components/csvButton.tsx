@@ -1,61 +1,39 @@
-"use client";
-import { FileIcon } from "@/components/icons";
-import Papa from "papaparse";
+'use client'
+import Papa from 'papaparse'
+
+import { FileIcon } from '@/components/icons'
+import { Data } from '@/types'
 
 interface CSVButtonProps {
-  setData: (data: any[]) => void;
-  datosRef: any;
+  setData: (data: Data[]) => void
+  dataRef: React.RefObject<HTMLDivElement>
 }
 
-const data = [
-  {
-    key: 1,
-    tipoAutomovil: "Sedan",
-    nBomba: 1,
-    horaInicio: "10:00",
-    horaFinalizacion: "10:30",
-    tipoPago: "Efectivo",
-    tipoProducto: "Regular",
-    litros: 10,
-  },
-  {
-    key: 2,
-    tipoAutomovil: "Sedan",
-    nBomba: 2,
-    horaInicio: "10:00",
-    horaFinalizacion: "10:30",
-    tipoPago: "Efectivo",
-    tipoProducto: "Regular",
-    litros: 10,
-  },
-];
-
-export default function CSVButton({ setData, datosRef }: CSVButtonProps) {
+export default function CSVButton({ setData, dataRef }: CSVButtonProps) {
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    datosRef.current.scrollIntoView({ behavior: "smooth" });
+    if (dataRef.current) {
+      dataRef.current.scrollIntoView({ behavior: 'smooth' })
+    }
 
-    setData(data);
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]
 
     if (file) {
       Papa.parse(file, {
         header: true,
         complete: (result: any) => {
-          setData(result.data);
+          setData(result.data)
         },
-      });
+      })
     }
-  };
+  }
 
   return (
     <div>
       <label
-        className="text-white cursor-pointer py-2 px-4 rounded-full flex items-center justify-center gap-2 
-             transition-all duration-300 ease-in-out bg-teal-600 shadow-md 
-             hover:bg-teal-500 hover:scale-105 active:scale-95"
+        className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-white shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-teal-500 active:scale-95"
         htmlFor="csvInput"
         style={{
-          boxShadow: "0px 4px 15px rgba(13, 148, 136, 0.6)",
+          boxShadow: '0px 4px 15px rgba(13, 148, 136, 0.6)',
         }}
       >
         <FileIcon />
@@ -64,10 +42,10 @@ export default function CSVButton({ setData, datosRef }: CSVButtonProps) {
       <input
         accept=".csv"
         id="csvInput"
-        style={{ display: "none" }}
+        style={{ display: 'none' }}
         type="file"
         onChange={handleFile}
       />
     </div>
-  );
+  )
 }

@@ -1,12 +1,11 @@
-import "@/styles/globals.css";
-import clsx from "clsx";
-import { Metadata, Viewport } from "next";
+import '@/styles/globals.css';
+import '@fontsource/roboto';
+import { Metadata, Viewport } from 'next';
 
-import { Providers } from "./providers";
+import { Navbar } from '@/components/navbar';
+import { siteConfig } from '@/config/site';
 
-import { Navbar } from "@/components/navbar";
-import { fontSans } from "@/config/fonts";
-import { siteConfig } from "@/config/site";
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: {
@@ -15,14 +14,14 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   icons: {
-    icon: "/favicon.ico",
+    icon: '/favicon.ico',
   },
 };
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "white" },
-    { media: "(prefers-color-scheme: dark)", color: "black" },
+    { media: '(prefers-color-scheme: light)', color: 'white' },
+    { media: '(prefers-color-scheme: dark)', color: 'black' },
   ],
 };
 
@@ -32,18 +31,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html suppressHydrationWarning lang="en">
+    <html suppressHydrationWarning lang='en'>
       <head />
-      <body
-        className={clsx(
-          "min-h-screen font-sans antialiased bg-background",
-          fontSans.variable
-        )}
-      >
-        <Providers themeProps={{ attribute: "class", defaultTheme: "dark" }}>
-          <div className="relative flex flex-col h-screen">
+      <body>
+        <Providers themeProps={{ attribute: 'class', defaultTheme: 'dark' }}>
+          <div className='relative flex h-screen flex-col'>
             <Navbar />
-            <main className="container mx-auto max-w-7xl md:pt-16 px-6 flex-grow">
+            <main className='container mx-auto max-w-7xl flex-grow px-6 md:pt-16'>
               {children}
             </main>
           </div>

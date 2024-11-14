@@ -1,26 +1,26 @@
-"use client";
-import { Link } from "@nextui-org/link";
-import { Snippet } from "@nextui-org/snippet";
-import { button as buttonStyles } from "@nextui-org/theme";
-import { useRef, useState } from "react";
+'use client'
+import { Link } from '@nextui-org/link'
+import { Snippet } from '@nextui-org/snippet'
+import { button as buttonStyles } from '@nextui-org/theme'
+import { useRef, useState } from 'react'
 
-import CSVButton from "@/components/csvButton";
-import DataTable from "@/components/dataTable";
-import { DownloadIcon, GithubIcon } from "@/components/icons";
-import { title } from "@/components/primitives";
-import { TimeServiceChart } from "@/components/timeServiceChart";
+import CSVButton from '@/components/csvButton'
+import DataSection from '@/components/dataSection'
+import { DownloadIcon, GithubIcon } from '@/components/icons'
+import { title } from '@/components/primitives'
+import { Data } from '@/types'
 
 export default function HomePage() {
-  const [data, setData] = useState<any[]>([]);
-  const datosRef = useRef(null);
+  const [data, setData] = useState<Data[]>([])
+  const dataRef = useRef(null)
 
   return (
     <>
-      <section className="flex flex-col w-full items-center justify-center gap-4 md:py-10">
-        <section className="flex w-full flex-col gap-4 justify-center items-center">
-          <div className="inline-block max-w-xl text-center justify-center">
+      <section className="flex w-full flex-col items-center justify-center gap-4 md:py-10">
+        <section className="flex w-full flex-col items-center justify-center gap-4">
+          <div className="inline-block max-w-xl justify-center text-center">
             <span className={title()}>Mejora y&nbsp;</span>
-            <span className={title({ color: "teal" })}>Optimiza&nbsp;</span>
+            <span className={title({ color: 'teal' })}>Optimiza&nbsp;</span>
             <br />
             <span className={title()}>
               los tiempos de espera
@@ -28,27 +28,28 @@ export default function HomePage() {
               en gasolineras.
             </span>
           </div>
-          <div className="grid grid-rows-3 md:grid-cols-2 md:grid-rows-2 gap-4">
-            <CSVButton setData={setData} datosRef={datosRef} />{" "}
+          <div className="grid grid-rows-3 gap-4 md:grid-cols-2 md:grid-rows-2">
+            <CSVButton dataRef={dataRef} setData={setData} />
             <Link
               isExternal
-              className={`${buttonStyles({ variant: "bordered", radius: "full" })} hover:scale-105 active:scale-95 transition-all duration-300 ease-in-out`}
+              className={`${buttonStyles({ variant: 'bordered', radius: 'full' })} rounded-lg transition-all duration-300 ease-in-out hover:scale-105 active:scale-95`}
               href="https://github.com/cr1st1anhernandez/GasStation"
             >
               <GithubIcon size={20} />
               GitHub
             </Link>
-            <div className="md:col-span-2 md:flex justify-center items-center text-gray-600">
+            <div className="items-center justify-center text-gray-600 md:col-span-2 md:flex">
               <Snippet
-                className="w-full md:w-fit flex justify-center items-center"
                 hideCopyButton
                 hideSymbol
+                className="flex w-full items-center justify-center rounded-lg transition-all duration-300 ease-in-out hover:scale-105 active:scale-95 md:w-fit"
                 variant="bordered"
               >
                 <Link
                   download
                   showAnchorIcon
                   anchorIcon={<DownloadIcon />}
+                  className="text-gray-600"
                   href="/registro_gasolina.csv"
                 >
                   Archivo de ejemplo
@@ -56,26 +57,9 @@ export default function HomePage() {
               </Snippet>
             </div>
           </div>
-        </section>
-        <section
-          ref={datosRef}
-          id="datos"
-          className="flex w-full flex-col gap-4"
-        >
-          {data.length ? (
-            <>
-              <div className="pt-24 flex flex-col gap-4">
-                <h2 className="text-2xl font-semibold">Datos</h2>
-                <DataTable data={data} />
-              </div>
-              <div className="w-full flex flex-col gap-4">
-                <h2 className="text-2xl font-semibold">Tiempo de servicio</h2>
-                <TimeServiceChart />
-              </div>
-            </>
-          ) : null}
+          <DataSection data={data} dataRef={dataRef} />
         </section>
       </section>
     </>
-  );
+  )
 }

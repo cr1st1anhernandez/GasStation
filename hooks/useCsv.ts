@@ -58,7 +58,6 @@ export const useCsv = () => {
           const parsedData = parseData(result.data)
 
           setData(parsedData)
-          console.log(parsedData)
         },
         error: (error) => {
           toast.error(`Error al parsear CSV: ${error}`)

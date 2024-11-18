@@ -17,7 +17,7 @@ export default function Tables() {
 
   return (
     <section className="flex gap-4">
-      <div className="w-full flex flex-col gap-4">
+      <div className="flex w-full flex-col gap-4">
         <header>
           <h2 className="text-2xl font-semibold">Tiempo Entre Llegadas</h2>
           <p className="text-balance opacity-80">
@@ -56,15 +56,14 @@ export default function Tables() {
         />
       </div>
 
-      <div className="w-full flex flex-col gap-4">
+      <div className="flex w-full flex-col gap-4">
         <header>
           <h2 className="text-2xl font-semibold">Tiempo de Servicio</h2>
           <p className="text-balance opacity-80">
             La tabla presenta las frecuencias observadas de los tiempos de
             servicio de los automóviles en la estación, clasificados en
             intervalos. Estos datos permiten analizar la duración promedio de
-            atención para optimizar los recursos y mejorar la experiencia del
-            cliente.
+            atención para optimizar los recursos.
           </p>
           <div className="flex justify-between items-center">
             <BlockMath math={'AC = \\frac{R}{1 + 3.322 \\log(n)}'} />

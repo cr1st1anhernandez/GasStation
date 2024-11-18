@@ -30,8 +30,8 @@ export default function Charts() {
   )
 
   return (
-    <section className="flex gap-4">
-      <div className="flex flex-col gap-4">
+    <section className="flex  gap-4">
+      <div className="flex w-full flex-col gap-4">
         <header>
           <h2 className="text-2xl font-semibold">Tiempo Entre Llegadas</h2>
           <p className="text-balance opacity-80">
@@ -66,7 +66,7 @@ export default function Charts() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex w-full flex-col gap-4">
         <header>
           <h2 className="text-2xl font-semibold">Tiempo de Servicio</h2>
           <p className="text-balance opacity-80">

@@ -14,14 +14,14 @@ export default function Home() {
   const { data } = useData()
 
   return (
-    <section className="flex w-full flex-col items-center justify-center gap-16">
+    <section className="flex w-full flex-col gap-16">
       <Toaster />
       <Main />
-      <section className="grid grid-rows-1 grid-cols-3 gap-4">
+      <section className="lg:grid flex flex-col grid-rows-1 grid-cols-3 gap-4">
         <div className="col-span-2 row-span-1">
           <About />
         </div>
-        <div className="col-span-1 row-span-1">
+        <div className="col-span-1 w-full row-span-1">
           <Simulation />
         </div>
       </section>

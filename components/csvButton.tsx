@@ -1,31 +1,9 @@
 'use client'
-import Papa from 'papaparse'
-
 import { FileIcon } from '@/components/icons'
-import { Data } from '@/types'
+import { useCsv } from '@/hooks/useCsv'
 
-interface CSVButtonProps {
-  setData: (data: Data[]) => void
-  dataRef: React.RefObject<HTMLDivElement>
-}
-
-export default function CSVButton({ setData, dataRef }: CSVButtonProps) {
-  const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (dataRef.current) {
-      dataRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
-
-    const file = e.target.files?.[0]
-
-    if (file) {
-      Papa.parse(file, {
-        header: true,
-        complete: (result: any) => {
-          setData(result.data)
-        },
-      })
-    }
-  }
+export default function CSVButton() {
+  const { handleFile } = useCsv()
 
   return (
     <div>

@@ -1,5 +1,37 @@
-import HomePage from '@/components/homePage';
+'use client'
+
+import { Toaster } from 'sonner'
+
+import Simulation from '@/components/simulation'
+import { useData } from '@/providers/dataContext'
+import About from '@/sections/about'
+import Charts from '@/sections/charts'
+import Data from '@/sections/data'
+import Main from '@/sections/main'
+import Tables from '@/sections/tables'
 
 export default function Home() {
-  return <HomePage />;
+  const { data } = useData()
+
+  return (
+    <section className="flex w-full flex-col items-center justify-center gap-16">
+      <Toaster />
+      <Main />
+      <section className="grid grid-rows-1 grid-cols-3 gap-4">
+        <div className="col-span-2 row-span-1">
+          <About />
+        </div>
+        <div className="col-span-1 row-span-1">
+          <Simulation />
+        </div>
+      </section>
+      {data.length > 0 && (
+        <>
+          <Data />
+          <Tables />
+          <Charts />
+        </>
+      )}
+    </section>
+  )
 }

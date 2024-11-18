@@ -11,10 +11,22 @@ import {
 } from '@nextui-org/table'
 import React from 'react'
 
+import { formatDate } from '@/utils/format'
+
 interface DataTableProps {
   data: any[]
   columns: { key: string; label: string }[]
   rows: number
+}
+
+const getCellContent = (item: any, key: string) => {
+  const value = getKeyValue(item, key)
+
+  if (key === 'HoraLlegada' || key === 'HoraSalida') {
+    return formatDate(value)
+  }
+
+  return value
 }
 
 export default function PaginationTable({
@@ -24,7 +36,6 @@ export default function PaginationTable({
 }: DataTableProps) {
   const [page, setPage] = React.useState(1)
   const rowsPerPage = rows
-
   const pages = Math.ceil(data.length / rowsPerPage)
 
   const items = React.useMemo(() => {
@@ -47,7 +58,7 @@ export default function PaginationTable({
             <TableRow key={index}>
               {columns.map((column) => (
                 <TableCell key={column.key}>
-                  {getKeyValue(item, column.key)}
+                  {getCellContent(item, column.key)}
                 </TableCell>
               ))}
             </TableRow>

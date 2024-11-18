@@ -1,131 +1,121 @@
 import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/card'
+import { Progress } from '@nextui-org/progress'
 import Lottie from 'lottie-react'
-import React, { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
-import { CancelIcon } from '@/components/icons'
+import {
+  AlertIcon,
+  CheckmarkIcon,
+  DownloadIcon,
+  ErrorIcon,
+} from '@/components/icons'
+import { useDownloadResults } from '@/hooks/useDownloadResults'
+import { useSimulation } from '@/hooks/useSimulation'
+import { useData } from '@/providers/dataContext'
 import animationData from '@/public/animation.json'
 
-class GasStation {
-  private numPumps: number
-  private availablePumps: number
-  private arrivalTime: number
-  private serviceTime: number
-  private setMessage: React.Dispatch<React.SetStateAction<string>>
+export default function Simulation() {
+  const { data } = useData()
+  const {
+    status,
+    messages,
+    currentSuggestions,
+    simulationResults,
+    startSimulation,
+  } = useSimulation()
 
-  constructor(
-    numPumps: number,
-    arrivalTime: number,
-    serviceTime: number,
-    setMessage: React.Dispatch<React.SetStateAction<string>>
-  ) {
-    this.numPumps = numPumps
-    this.availablePumps = numPumps
-    this.arrivalTime = arrivalTime
-    this.serviceTime = serviceTime
-    this.setMessage = setMessage
-  }
-
-  private generateCarArrival() {
-    return Math.random() * this.arrivalTime
-  }
-
-  private generateServiceTime() {
-    return Math.random() * this.serviceTime
-  }
-
-  private async serveCar() {
-    const arrival = this.generateCarArrival()
-
-    await this.sleep(arrival)
-    this.setMessage(
-      `Auto llega a la gasolinera a los ${arrival.toFixed(2)} minutos`
-    )
-
-    if (this.availablePumps > 0) {
-      this.availablePumps--
-      const serviceTime = this.generateServiceTime()
-
-      this.setMessage(
-        `Auto está siendo atendido ${arrival.toFixed(2)} - ${(arrival + serviceTime).toFixed(2)} minutos`
-      )
-
-      await this.sleep(serviceTime)
-
-      this.setMessage(
-        `Auto se va de la gasolinera a los ${(arrival + serviceTime).toFixed(2)} minutos`
-      )
-      this.availablePumps++
-    } else {
-      this.setMessage(`No hay bombas disponibles, el auto espera...`)
-      await this.serveCar()
-    }
-  }
-
-  private sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms * 1000))
-  }
-
-  public async runSimulation(simulationTime: number) {
-    const endTime = Date.now() + simulationTime * 1000
-
-    while (Date.now() < endTime) {
-      await this.serveCar()
-    }
-  }
-}
-
-const GasStationSimulation: React.FC = () => {
-  const [simulating, setSimulating] = useState(false)
-  const [message, setMessage] = useState<string>('')
-  const [visible, setVisible] = useState(true)
+  const { downloadResults } = useDownloadResults()
 
   useEffect(() => {
-    const handleStartSimulation = async () => {
-      setSimulating(true)
-      setMessage('Simulación iniciada...')
-
-      const numPumps = 4
-      const arrivalTime = 5
-      const serviceTime = 4
-      const simulationTime = 100
-
-      const gasStation = new GasStation(
-        numPumps,
-        arrivalTime,
-        serviceTime,
-        setMessage
-      )
-
-      await gasStation.runSimulation(simulationTime)
-
-      setMessage('Simulación finalizada.')
-      setSimulating(false)
+    const runSimulation = async () => {
+      await startSimulation()
     }
 
-    handleStartSimulation()
-    setVisible(true)
-  }, [])
-
-  if (!visible) return null
+    runSimulation()
+  }, [data])
 
   return (
-    <Card className="flex max-w-xs fixed bottom-8 right-8 flex-col gap-2 justify-center items-center">
+    <Card className="w-full h-full flex flex-col gap-2 justify-center items-center">
       <CardHeader>
-        <div className="flex justify-between w-full">
-          <h2 className="text-2xl font-semibold">Simulación</h2>
-          <button onClick={() => setVisible(false)}>
-            <CancelIcon />
-          </button>
-        </div>
+        <h2 className="text-2xl font-semibold">Simulación</h2>
       </CardHeader>
       <CardBody>
-        {simulating && <Lottie animationData={animationData} />}
+        {status === 'simulating' && (
+          <div className="flex flex-col justify-between h-full">
+            <div className="flex-1">
+              <ul>
+                {messages.slice(-2).map((msg: string, index: number) => (
+                  <li key={index} className="text-sm text-[#0d9488]">
+                    {msg}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="flex items-center flex-col mb-4">
+              <Lottie animationData={animationData} />
+              <Progress
+                isIndeterminate
+                aria-label="Simulando..."
+                color="primary"
+                label="Simulando..."
+                radius="sm"
+                showValueLabel={true}
+                size="sm"
+              />
+            </div>
+          </div>
+        )}
+
+        {status === 'completed' && (
+          <div>
+            <p className="flex flex-col text-lg items-center">
+              Simulación completada.
+              <CheckmarkIcon />
+            </p>
+            <strong>Sugerencias:</strong>
+            <ul className="list-disc list-inside">
+              {currentSuggestions.map((suggestion: string, index: number) => (
+                <li key={index} className="text-sm ">
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {status === 'failed' && (
+          <div className="h-full grid place-items-center">
+            <p className="text-lg items-center flex flex-col text-rose-600">
+              La simulación ha fallado.
+              <ErrorIcon />
+            </p>
+          </div>
+        )}
+
+        {status === 'not-started' && (
+          <div className="h-full grid place-items-center">
+            <p className="text-md text-center opacity-70 flex flex-col items-center gap-2">
+              Importa el archivo csv para comenzar la simulación.
+              <AlertIcon height={40} width={40} />
+            </p>
+          </div>
+        )}
       </CardBody>
-      <CardFooter>
-        <p className="text-sm text-gray-700">{message}</p>
-      </CardFooter>
+      {status === 'completed' && (
+        <CardFooter className="flex justify-end">
+          <button
+            className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-white shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-teal-500 active:scale-95"
+            style={{
+              boxShadow: '0px 4px 15px rgba(13, 148, 136, 0.6)',
+            }}
+            onClick={() => downloadResults(simulationResults)}
+          >
+            <DownloadIcon />
+            Descargar Resultados
+          </button>
+        </CardFooter>
+      )}
     </Card>
   )
 }
-
-export default GasStationSimulation

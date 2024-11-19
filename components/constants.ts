@@ -96,11 +96,11 @@ export const dataColumns = [
 export const frequencyColumns = [
   {
     key: 'range',
-    label: 'CLASES',
+    label: 'CLASES - INTERVALOS MINUTOS',
   },
   {
     key: 'frequency',
-    label: 'F.0',
+    label: 'FRECUENCIA OBSERVADA',
   },
 ]
 

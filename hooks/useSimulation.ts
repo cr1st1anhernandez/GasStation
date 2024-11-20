@@ -48,18 +48,16 @@ export const useSimulation = () => {
     let totalBlockedTime = 0
 
     for (const client of data) {
-      const availablePumpIndex = pumps.findIndex((p) => p === null)
+      const pumpIndex = client.NumeroBomba - 1
 
-      if (availablePumpIndex !== -1) {
+      if (pumps[pumpIndex] === null) {
         const serviceTime = client.DuracionServicio || 0
 
-        pumpStats[availablePumpIndex].usage++
-        pumpStats[availablePumpIndex].serviceTimes += serviceTime
-        pumpStats[availablePumpIndex].clientCount++
+        pumpStats[pumpIndex].usage++
+        pumpStats[pumpIndex].serviceTimes += serviceTime
+        pumpStats[pumpIndex].clientCount++
 
-        const message = `El cliente ${client.NumeroCliente} con vehiculo ${client.TipoAutomovil} esta siendo atendido en la bomba ${
-          availablePumpIndex + 1
-        } (Tiempo de servicio: ${serviceTime.toFixed(2)} min).`
+        const message = `El cliente ${client.NumeroCliente} con vehiculo ${client.TipoAutomovil} esta siendo atendido en la bomba ${client.NumeroBomba} (Tiempo de servicio: ${serviceTime.toFixed(2)} min).`
 
         await new Promise((resolve) => setTimeout(resolve, 1))
 
@@ -69,12 +67,12 @@ export const useSimulation = () => {
           NumeroCliente: client.NumeroCliente,
           TipoAutomovil: client.TipoAutomovil,
           DuracionServicio: serviceTime,
-          BombaAsignada: availablePumpIndex + 1,
+          BombaAsignada: client.NumeroBomba,
           Mensaje: message,
         })
       } else {
         totalBlockedTime++
-        const message = `El cliente ${client.NumeroCliente} con vehiculo ${client.TipoAutomovil} esta esperando (Todas las bombas ocupadas).`
+        const message = `El cliente ${client.NumeroCliente} con vehiculo ${client.TipoAutomovil} esta esperando (Bomba ${client.NumeroBomba} ocupada).`
 
         results.push(message)
         simulationData.push({

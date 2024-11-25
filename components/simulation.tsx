@@ -20,11 +20,9 @@ export default function Simulation() {
     status,
     messages,
     currentSuggestions,
-    simulationResults,
     startSimulation,
     numPumps,
     pumpAverages,
-    totalBlockedTime,
     avgServiceTime,
   } = useSimulation()
 
@@ -119,7 +117,7 @@ export default function Simulation() {
                 currentSuggestions,
                 numPumps,
                 pumpAverages,
-                totalBlockedTime
+                avgServiceTime
               )
             }
           >

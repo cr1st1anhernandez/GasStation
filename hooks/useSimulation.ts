@@ -1,6 +1,7 @@
 import { useCallback, useMemo, useState } from 'react'
 
 import { useData } from '@/providers/dataContext'
+import { usePumps } from '@/providers/pumpsContext'
 import { SimulationResult, SimulationStatus } from '@/types'
 
 interface PumpStats {
@@ -18,6 +19,7 @@ interface PumpAverage {
 export const useSimulation = () => {
   const [status, setStatus] = useState<SimulationStatus>('not-started')
   const [messages, setMessages] = useState<string[]>([])
+  const { setPumpsOptimized } = usePumps()
   const [currentSuggestions, setCurrentSuggestions] = useState<string[]>([])
   const [simulationResults, setSimulationResults] = useState<
     SimulationResult[]
@@ -26,6 +28,7 @@ export const useSimulation = () => {
   const [totalBlockedTime, setTotalBlockedTime] = useState<number>(0)
   const [avgServiceTime, setAvgServiceTime] = useState<number>(0)
   const { data } = useData()
+  const { setPumpsAverage } = usePumps()
 
   const numPumps = useMemo(() => {
     const pumps = data
@@ -104,6 +107,43 @@ export const useSimulation = () => {
     const calculatedAvgServiceTime =
       calculatedPumpAverages.reduce((sum, curr) => sum + curr.averageTime, 0) /
       calculatedPumpAverages.length
+
+    // Convertir los promedios al formato esperado por el contexto
+    const pumpsContextData = calculatedPumpAverages.map((pump) => ({
+      pumpNumber: pump.index + 1, // Convertimos el índice a número de bomba
+      averageServiceTime: pump.averageTime,
+    }))
+
+    // Guardar en el contexto de bombas
+    setPumpsAverage(pumpsContextData)
+
+    const totalUsage = calculatedPumpAverages.reduce(
+      (sum, pump) => sum + pump.usage,
+      0
+    )
+    const idealUsagePerPump = totalUsage / numPumps
+
+    // Calcular distribución optimizada
+    const optimizedPumps = calculatedPumpAverages.map((pump) => {
+      const currentEfficiency = pump.usage / idealUsagePerPump
+      const recommendedUsage = idealUsagePerPump
+      const potentialImprovement = (
+        ((recommendedUsage - pump.usage) / pump.usage) *
+        100
+      ).toFixed(1)
+
+      return {
+        pumpNumber: pump.index + 1,
+        currentUsage: pump.usage,
+        recommendedUsage: Math.round(recommendedUsage),
+        averageServiceTime: pump.averageTime,
+        efficiency: currentEfficiency,
+        potentialImprovement: parseFloat(potentialImprovement),
+      }
+    })
+
+    // Guardar datos optimizados
+    setPumpsOptimized(optimizedPumps)
 
     const suggestions: string[] = []
 

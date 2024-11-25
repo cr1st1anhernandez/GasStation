@@ -7,16 +7,26 @@ interface PumpAverage {
 
 interface PumpsContextProps {
   pumpsAverage: PumpAverage[]
+  pumpsOptimized: PumpAverage[]
   setPumpsAverage: (pumpsAverage: PumpAverage[]) => void
+  setPumpsOptimized: (pumpsOptimized: PumpAverage[]) => void
 }
 
 const PumpsContext = createContext<PumpsContextProps | undefined>(undefined)
 
 export const PumpsProvider = ({ children }: { children: ReactNode }) => {
   const [pumpsAverage, setPumpsAverage] = useState<PumpAverage[]>([])
+  const [pumpsOptimized, setPumpsOptimized] = useState<PumpAverage[]>([])
 
   return (
-    <PumpsContext.Provider value={{ pumpsAverage, setPumpsAverage }}>
+    <PumpsContext.Provider
+      value={{
+        pumpsAverage,
+        setPumpsAverage,
+        setPumpsOptimized,
+        pumpsOptimized,
+      }}
+    >
       {children}
     </PumpsContext.Provider>
   )

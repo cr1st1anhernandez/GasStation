@@ -5,7 +5,7 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 }
 
 export type FrequencyDistribution = {
-  interval: string
+  interval: number
   range: string
   frequency: number
 }

@@ -9,7 +9,7 @@ import {
   DownloadIcon,
   ErrorIcon,
 } from '@/components/icons'
-import { useDownloadResults } from '@/hooks/useDownloadResults'
+import { useDownloadReport } from '@/hooks/useDownloadResults'
 import { useSimulation } from '@/hooks/useSimulation'
 import { useData } from '@/providers/dataContext'
 import animationData from '@/public/animation.json'
@@ -22,9 +22,13 @@ export default function Simulation() {
     currentSuggestions,
     simulationResults,
     startSimulation,
+    numPumps,
+    pumpAverages,
+    totalBlockedTime,
+    avgServiceTime,
   } = useSimulation()
 
-  const { downloadResults } = useDownloadResults()
+  const { downloadReport } = useDownloadReport()
 
   useEffect(() => {
     const runSimulation = async () => {
@@ -109,10 +113,18 @@ export default function Simulation() {
             style={{
               boxShadow: '0px 4px 15px rgba(13, 148, 136, 0.6)',
             }}
-            onClick={() => downloadResults(simulationResults)}
+            onClick={() =>
+              downloadReport(
+                status,
+                currentSuggestions,
+                numPumps,
+                pumpAverages,
+                totalBlockedTime
+              )
+            }
           >
             <DownloadIcon />
-            Descargar Resultados
+            Descargar Informe
           </button>
         </CardFooter>
       )}

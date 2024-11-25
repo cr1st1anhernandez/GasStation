@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import * as React from 'react'
 
 import { DataProvider } from '@/providers/dataContext'
+import { PumpsProvider } from '@/providers/pumpsContext'
 
 export interface ProvidersProps {
   children: React.ReactNode
@@ -19,7 +20,9 @@ export function Providers({ children, themeProps }: ProvidersProps) {
   return (
     <NextUIProvider navigate={router.push}>
       <NextThemesProvider {...themeProps}>
-        <DataProvider>{children}</DataProvider>
+        <DataProvider>
+          <PumpsProvider>{children}</PumpsProvider>
+        </DataProvider>
       </NextThemesProvider>
     </NextUIProvider>
   )

@@ -1,7 +1,6 @@
 import { BlockMath } from 'react-katex'
 
 import { Chart } from '@/components/chart'
-import { frequencyColumns } from '@/components/constants'
 import { generateFrequencyDistribution } from '@/data/functions'
 import { useTimeData } from '@/hooks/useTimeData'
 
@@ -30,7 +29,7 @@ export default function Charts() {
   )
 
   return (
-    <section className="flex  gap-4">
+    <section className="flex gap-4">
       <div className="flex w-full flex-col gap-4">
         <header>
           <h2 className="text-2xl font-semibold">Tiempo Entre Llegadas</h2>
@@ -58,7 +57,15 @@ export default function Charts() {
             </div>
           </div>
         </header>
-        <Chart columns={frequencyColumns} data={example1} rows={5} />
+        <Chart
+          XAxisKey="interval"
+          XAxisName="Tiempo Promedio"
+          YAxisKey="frequency"
+          YAxisName="Automóviles"
+          color="#0d9488"
+          data={example1}
+          rows={15}
+        />
         <p className="opacity-80">
           Ejemplo: La primera barra de la gráfica representa que{' '}
           {example1[0]?.frequency} automóviles estuvieron dentro del rango de
@@ -93,7 +100,15 @@ export default function Charts() {
             </div>
           </div>
         </header>
-        <Chart columns={frequencyColumns} data={example2} rows={5} />
+        <Chart
+          XAxisKey="interval"
+          XAxisName="Tiempo Promedio"
+          YAxisKey="frequency"
+          YAxisName="Automóviles"
+          color="#0d9488"
+          data={example2}
+          rows={15}
+        />
         <p className="opacity-80">
           Ejemplo: La primera barra de la gráfica representa que{' '}
           {example2[0]?.frequency} automóviles tuvieron un tiempo de servicio

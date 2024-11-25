@@ -8,6 +8,7 @@ import About from '@/sections/about'
 import Charts from '@/sections/charts'
 import Data from '@/sections/data'
 import Main from '@/sections/main'
+import { Pumps } from '@/sections/pumps'
 import Tables from '@/sections/tables'
 
 export default function Home() {
@@ -32,6 +33,7 @@ export default function Home() {
           <Charts />
         </>
       )}
+      <Pumps />
     </section>
   )
 }

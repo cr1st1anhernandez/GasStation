@@ -9,6 +9,12 @@ interface PumpStats {
   clientCount: number
 }
 
+interface PumpAverage {
+  index: number
+  averageTime: number
+  usage: number
+}
+
 export const useSimulation = () => {
   const [status, setStatus] = useState<SimulationStatus>('not-started')
   const [messages, setMessages] = useState<string[]>([])
@@ -16,6 +22,9 @@ export const useSimulation = () => {
   const [simulationResults, setSimulationResults] = useState<
     SimulationResult[]
   >([])
+  const [pumpAverages, setPumpAverages] = useState<PumpAverage[]>([])
+  const [totalBlockedTime, setTotalBlockedTime] = useState<number>(0)
+  const [avgServiceTime, setAvgServiceTime] = useState<number>(0)
   const { data } = useData()
 
   const numPumps = useMemo(() => {
@@ -45,7 +54,7 @@ export const useSimulation = () => {
 
     const results: string[] = []
     const simulationData: SimulationResult[] = []
-    let totalBlockedTime = 0
+    let blockedTime = 0
 
     for (const client of data) {
       const pumpIndex = client.NumeroBomba - 1
@@ -71,7 +80,7 @@ export const useSimulation = () => {
           Mensaje: message,
         })
       } else {
-        totalBlockedTime++
+        blockedTime++
         const message = `El cliente ${client.NumeroCliente} con vehiculo ${client.TipoAutomovil} esta esperando (Bomba ${client.NumeroBomba} ocupada).`
 
         results.push(message)
@@ -85,35 +94,35 @@ export const useSimulation = () => {
       }
     }
 
-    const pumpAverages = pumpStats.map((stat, index) => ({
+    const calculatedPumpAverages = pumpStats.map((stat, index) => ({
       index,
       averageTime:
         stat.clientCount > 0 ? stat.serviceTimes / stat.clientCount : 0,
       usage: stat.usage,
     }))
 
+    const calculatedAvgServiceTime =
+      calculatedPumpAverages.reduce((sum, curr) => sum + curr.averageTime, 0) /
+      calculatedPumpAverages.length
+
     const suggestions: string[] = []
 
-    const maxUsagePump = pumpAverages.reduce((max, curr) =>
+    const maxUsagePump = calculatedPumpAverages.reduce((max, curr) =>
       curr.usage > max.usage ? curr : max
     )
-    const minUsagePump = pumpAverages.reduce((min, curr) =>
+    const minUsagePump = calculatedPumpAverages.reduce((min, curr) =>
       curr.usage < min.usage ? curr : min
     )
 
-    const slowestPump = pumpAverages.reduce((max, curr) =>
+    const slowestPump = calculatedPumpAverages.reduce((max, curr) =>
       curr.averageTime > max.averageTime && curr.usage > 0 ? curr : max
     )
-
-    const avgServiceTime =
-      pumpAverages.reduce((sum, curr) => sum + curr.averageTime, 0) /
-      pumpAverages.length
 
     const usageDifference = maxUsagePump.usage / (minUsagePump.usage || 1)
 
     const isBalanced = usageDifference <= 1.5
 
-    const isEfficient = avgServiceTime <= 3 && totalBlockedTime <= 3
+    const isEfficient = calculatedAvgServiceTime <= 3 && blockedTime <= 3
 
     if (usageDifference > 2) {
       suggestions.push(
@@ -127,17 +136,17 @@ export const useSimulation = () => {
       )
     }
 
-    if (totalBlockedTime > 5) {
+    if (blockedTime > 5) {
       suggestions.push(
         '😟 Hubo demasiados clientes esperando. Considera añadir más bombas para reducir los tiempos de espera.'
       )
-    } else if (totalBlockedTime > 3) {
+    } else if (blockedTime > 3) {
       suggestions.push(
         '⏳ Se están generando algunas colas de espera. Considera optimizar la distribución de vehículos entre las bombas disponibles.'
       )
     }
 
-    if (avgServiceTime > 3.5) {
+    if (calculatedAvgServiceTime > 3.5) {
       suggestions.push(
         '⏱️ El tiempo promedio de servicio general está por encima de lo óptimo. Considera implementar medidas para agilizar el proceso de atención.'
       )
@@ -154,9 +163,13 @@ export const useSimulation = () => {
         '⚖️ La distribución de vehículos entre las bombas está bien balanceada, manteniendo una operación eficiente.'
       )
     }
+
     setMessages(results)
     setCurrentSuggestions(suggestions)
     setSimulationResults(simulationData)
+    setPumpAverages(calculatedPumpAverages)
+    setTotalBlockedTime(blockedTime)
+    setAvgServiceTime(calculatedAvgServiceTime)
     setStatus('completed')
   }, [data, numPumps])
 
@@ -164,6 +177,9 @@ export const useSimulation = () => {
     setMessages([])
     setCurrentSuggestions([])
     setSimulationResults([])
+    setPumpAverages([])
+    setTotalBlockedTime(0)
+    setAvgServiceTime(0)
     await simulate()
   }, [simulate])
 
@@ -173,5 +189,10 @@ export const useSimulation = () => {
     currentSuggestions,
     simulationResults,
     startSimulation,
+    // Nuevos valores retornados
+    numPumps,
+    pumpAverages,
+    totalBlockedTime,
+    avgServiceTime,
   }
 }

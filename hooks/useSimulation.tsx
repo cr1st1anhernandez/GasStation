@@ -163,35 +163,71 @@ export const useSimulation = () => {
 
     simulationInterval.current = setInterval(() => {
       if (currentStep >= steps) {
-        clearInterval(simulationInterval.current)
-        setIsSimulating(false)
-        setPumps((prev) =>
-          prev.map((pump) => ({
+        // Actualizar utilización final
+        setPumps((prev) => {
+          const utilization = prev.reduce(
+            (acc, pump) => ({
+              ...acc,
+              [pump.id]:
+                pump.occupiedTime / (pump.occupiedTime + pump.idleTime),
+            }),
+            {}
+          )
+
+          setStats((prevStats) => ({
+            ...prevStats,
+            pumpUtilization: utilization,
+          }))
+
+          return prev.map((pump) => ({
             ...pump,
             status: 'libre',
           }))
-        )
+        })
+
+        clearInterval(simulationInterval.current)
+        setIsSimulating(false)
         toast.success('Simulacion Terminada')
 
         return
       }
 
-      // Actualiza el estado de las bombas aleatoriamente
-      setPumps((prev) =>
-        prev.map((pump) => ({
-          ...pump,
-          status: Math.random() > 0.5 ? 'ocupada' : 'libre',
-          occupiedTime:
-            pump.status === 'ocupada'
-              ? pump.occupiedTime + 1
-              : pump.occupiedTime,
-          idleTime: pump.status === 'libre' ? pump.idleTime + 1 : pump.idleTime,
+      setPumps((prev: PumpState[]) => {
+        const newPumps = prev.map((pump) => {
+          const newStatus: 'ocupada' | 'libre' =
+            Math.random() > 0.5 ? 'ocupada' : 'libre'
+
+          return {
+            ...pump,
+            status: newStatus,
+            occupiedTime:
+              newStatus === 'ocupada'
+                ? pump.occupiedTime + 1
+                : pump.occupiedTime,
+            idleTime: newStatus === 'libre' ? pump.idleTime + 1 : pump.idleTime,
+          }
+        })
+
+        // Actualizar utilización en cada paso
+        const utilization = newPumps.reduce(
+          (acc, pump) => ({
+            ...acc,
+            [pump.id]: pump.occupiedTime / (pump.occupiedTime + pump.idleTime),
+          }),
+          {}
+        )
+
+        setStats((prevStats) => ({
+          ...prevStats,
+          pumpUtilization: utilization,
         }))
-      )
+
+        return newPumps
+      })
 
       setSimulationTime((prev) => prev + 1)
       currentStep++
-    }, 1000) // Intervalo de 1 segundo
+    }, 1000)
   }
 
   const initializeSimulation = useCallback(() => {

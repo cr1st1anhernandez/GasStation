@@ -35,6 +35,9 @@ export default function Tables() {
                   <code className="font-bold">AC</code>: Amplitud de clase
                 </li>
                 <li>
+                  <code className="font-bold">FO</code>: Frecuencia observada
+                </li>
+                <li>
                   <code className="font-bold">R</code>: Rango (máximo - mínimo)
                 </li>
                 <li>
@@ -72,6 +75,9 @@ export default function Tables() {
               <ul>
                 <li>
                   <code className="font-bold">AC</code>: Amplitud de clase
+                </li>
+                <li>
+                  <code className="font-bold">FO</code>: Frecuencia observada
                 </li>
                 <li>
                   <code className="font-bold">R</code>: Rango (máximo - mínimo)

@@ -1,14 +1,21 @@
 import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/card'
 import { Link } from '@nextui-org/link'
+import { InfoIcon } from 'lucide-react'
 
 import CSVButton from '@/components/csvButton'
 import { DownloadIcon } from '@/components/icons'
 
 export default function About() {
   return (
-    <Card>
+    <Card className="p-4" shadow="sm">
       <CardHeader className="flex-col items-start">
-        <span className="text-teal-600 font-bold">Información</span>
+        <div className="flex w-full justify-between">
+          <span className="text-teal-600 font-bold">Información</span>
+          <div className="flex gap-2 items-center opacity-60">
+            <InfoIcon />
+            <p>Todo es manejado en segundos para mayor precisión.</p>
+          </div>
+        </div>
         <h2 className="text-3xl font-bold">Algoritmo de Optimización</h2>
       </CardHeader>
       <CardBody>

@@ -4,21 +4,10 @@ import { toast } from 'sonner'
 import { csvColumns } from '@/components/constants'
 import { useData } from '@/providers/dataContext'
 import { Data } from '@/types'
+import { parseTime } from '@/utils/format'
 
 export const useCsv = () => {
-  const { setData } = useData()
-
-  const parseTime = (timeString?: string): Date => {
-    if (!timeString) {
-      return new Date(0)
-    }
-    const [hours, minutes] = timeString.split(':').map(Number)
-    const date = new Date()
-
-    date.setHours(hours, minutes, 0, 0)
-
-    return date
-  }
+  const { setData, setNumPumps } = useData()
 
   const parseData = (rawData: any[]): Data[] => {
     return rawData
@@ -43,7 +32,7 @@ export const useCsv = () => {
       Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
-        complete: (result: any) => {
+        complete: (result) => {
           const missingColumns = csvColumns.filter(
             (col) => !Object.keys(result.data[0] || {}).includes(col)
           )
@@ -51,17 +40,27 @@ export const useCsv = () => {
           if (missingColumns.length > 0) {
             toast.error('Formato de CSV incorrecto.')
             setData([])
+            setNumPumps(0)
 
             return
           }
 
           const parsedData = parseData(result.data)
+          const maxPumps = Math.max(
+            ...parsedData
+              .map((item) => item.NumeroBomba)
+              .filter((num) => !isNaN(num)),
+            0
+          )
 
+          console.log(maxPumps)
+          setNumPumps(maxPumps)
           setData(parsedData)
         },
         error: (error) => {
           toast.error(`Error al parsear CSV: ${error}`)
           setData([])
+          setNumPumps(0)
         },
       })
     }

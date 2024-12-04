@@ -5,15 +5,18 @@ import { Data } from '@/types'
 interface DataContextProps {
   data: Data[]
   setData: (data: Data[]) => void
+  numPumps: number
+  setNumPumps: (num: number) => void
 }
 
 const DataContext = createContext<DataContextProps | undefined>(undefined)
 
 export const DataProvider = ({ children }: { children: ReactNode }) => {
   const [data, setData] = useState<Data[]>([])
+  const [numPumps, setNumPumps] = useState(0)
 
   return (
-    <DataContext.Provider value={{ data, setData }}>
+    <DataContext.Provider value={{ data, setData, numPumps, setNumPumps }}>
       {children}
     </DataContext.Provider>
   )

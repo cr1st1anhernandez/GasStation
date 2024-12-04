@@ -7,7 +7,7 @@ export default function Data() {
 
   return (
     <div className="flex w-full flex-col gap-4">
-      <h2 className="text-2xl font-semibold">Datos</h2>
+      <h2 className="text-2xl font-semibold">Datos obtenidos del archivo</h2>
       <PaginationTable columns={dataColumns} data={data} rows={10} />
     </div>
   )

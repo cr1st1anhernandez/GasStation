@@ -77,7 +77,7 @@ export const dataColumns = [
   },
   {
     key: 'DuracionServicio',
-    label: 'DURACION SERVICIO',
+    label: 'SERVICIO',
   },
   {
     key: 'TiempoEntreLlegadas',
@@ -96,11 +96,11 @@ export const dataColumns = [
 export const frequencyColumns = [
   {
     key: 'range',
-    label: 'CLASES - INTERVALOS MINUTOS',
+    label: 'CLASES',
   },
   {
     key: 'frequency',
-    label: 'FRECUENCIA OBSERVADA',
+    label: 'FO',
   },
 ]
 

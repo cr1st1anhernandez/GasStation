@@ -69,7 +69,7 @@ export default function Charts() {
         <p className="opacity-80">
           Ejemplo: La primera barra de la gráfica representa que{' '}
           {example1[0]?.frequency} automóviles estuvieron dentro del rango de
-          tiempo entre {example1[0]?.range} minutos.
+          tiempo entre {example1[0]?.range} segundos.
         </p>
       </div>
 
@@ -112,7 +112,7 @@ export default function Charts() {
         <p className="opacity-80">
           Ejemplo: La primera barra de la gráfica representa que{' '}
           {example2[0]?.frequency} automóviles tuvieron un tiempo de servicio
-          entre {example2[0]?.range} minutos.
+          entre {example2[0]?.range} segundos.
         </p>
       </div>
     </section>

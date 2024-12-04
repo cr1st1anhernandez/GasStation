@@ -1,10 +1,6 @@
-export const formatDate = (date: Date | string) => {
-  if (!date) return ''
-  const dateObj = typeof date === 'string' ? new Date(date) : date
+export const parseTime = (time: string): string => {
+  const [hourPart, minutePart] = time.split(':')
+  const ampm = time.includes('a. m.') ? 'am' : 'pm'
 
-  return dateObj.toLocaleString('es-ES', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  })
+  return `${hourPart}:${minutePart} ${ampm}`
 }

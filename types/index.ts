@@ -5,9 +5,21 @@ export type IconSvgProps = SVGProps<SVGSVGElement> & {
 }
 
 export type FrequencyDistribution = {
-  interval: number
+  interval: string
   range: string
   frequency: number
+}
+
+interface PumpStats {
+  usage: number
+  serviceTimes: number
+  clientCount: number
+}
+
+interface PumpAverage {
+  index: number
+  averageTime: number
+  usage: number
 }
 
 export type SimulationStatus =
@@ -20,8 +32,8 @@ export type Data = {
   NumeroCliente: number
   TipoAutomovil: string
   NumeroBomba: number
-  HoraLlegada: Date
-  HoraSalida: Date
+  HoraLlegada: string
+  HoraSalida: string
   DuracionServicio: number
   TiempoEntreLlegadas: number
   TipoPago: string

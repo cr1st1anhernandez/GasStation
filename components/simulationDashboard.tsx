@@ -1,9 +1,16 @@
 import { Button } from '@nextui-org/button'
 import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/card'
 import { Slider } from '@nextui-org/slider'
-import { Tooltip } from '@nextui-org/tooltip'
-import { Car, Clock, CreditCard, DownloadIcon, Fuel } from 'lucide-react'
-import { useEffect } from 'react'
+import {
+  Car,
+  Clock,
+  CreditCard,
+  DownloadIcon,
+  Fuel,
+  HomeIcon,
+  PlayIcon,
+} from 'lucide-react'
+import { useEffect, useState } from 'react'
 import {
   Bar,
   BarChart,
@@ -40,26 +47,39 @@ type SimulationStats = {
   }
 }
 export const SimulationDashboard = () => {
+  const [steps, setSteps] = useState(10)
+
   useEffect(() => {
     initializeSimulation()
   }, [])
 
   // Using the simulation hook
-  const { simulationTime, stats, pumps, runSimulation, initializeSimulation } =
-    useSimulation()
+  const {
+    simulationTime,
+    stats,
+    pumps,
+    runSimulation,
+    initializeSimulation,
+    isSimulating,
+  } = useSimulation()
 
   // Transform pump utilization data for the chart
-  const pumpUtilizationData = Object.entries(stats.pumpUtilization).map(
-    ([pump, utilization]) => ({
-      pump: `Pump ${pump}`,
-      utilization: (utilization * 100).toFixed(1),
-    })
-  )
+  const pumpUtilizationData = Object.entries(stats.pumpUtilization)
+    .filter(([_, utilization]) => utilization > 0)
+    .map(([pump, utilization]) => ({
+      pump: `Bomba ${pump}`,
+      utilizacion: (utilization * 100).toFixed(1),
+    }))
 
   // Calculate overall statistics
   const totalPumps = pumps.length
   const activePumps = pumps.filter((p) => p.status === 'libre').length
   const utilizationRate = (activePumps / totalPumps) * 100
+
+  const handleStartSimulation = () => {
+    initializeSimulation() // Limpia la simulación anterior
+    runSimulation(steps)
+  }
 
   return (
     <Card className="p-4" shadow="sm">
@@ -80,6 +100,7 @@ export const SimulationDashboard = () => {
               label="Numero de pasos"
               maxValue={100}
               minValue={1}
+              onChange={(value) => setSteps(value as number)}
             />
             <p className="opacity-60">
               <span className="font-bold">Paso = </span>
@@ -89,20 +110,23 @@ export const SimulationDashboard = () => {
           <div className="flex flex-col gap-2">
             <button
               className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-teal-600 px-4 py-2 text-white shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-teal-500 active:scale-95"
+              disabled={isSimulating}
               style={{
                 boxShadow: '0px 4px 8px rgba(13, 148, 136, 0.6)',
               }}
-              onClick={() => runSimulation(100)}
+              onClick={handleStartSimulation}
             >
-              Iniciar
+              {isSimulating ? 'Simulando...' : 'Iniciar'}
+              {isSimulating ? <HomeIcon /> : <PlayIcon />}
             </button>
             <button
               className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-rose-600 px-4 py-2 text-white shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-rose-500 active:scale-95"
               style={{
                 boxShadow: '0px 4px 8px rgba(255, 99, 132, 0.6)',
               }}
+              onClick={initializeSimulation}
             >
-              Detener
+              Reiniciar
             </button>
           </div>
         </div>
@@ -195,21 +219,20 @@ export const SimulationDashboard = () => {
               <h2>Utilización de bombas </h2>
             </CardHeader>
             <CardBody>
-              {Object.keys(stats.pumpUtilization).length > 0 ? (
+              {pumpUtilizationData.length > 0 ? (
                 <div className="h-64">
                   <ResponsiveContainer height="100%" width="100%">
                     <BarChart data={pumpUtilizationData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="pump" />
                       <YAxis unit="%" />
-                      <Tooltip />
-                      <Bar dataKey="utilization" fill="#0d9488" />
+                      <Bar dataKey="utilizacion" fill="#0d9488" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
               ) : (
                 <div className="text-center text-gray-500">
-                  Inicie la simulación para obtener datos de utilización.
+                  No hay datos de utilización disponibles
                 </div>
               )}
             </CardBody>

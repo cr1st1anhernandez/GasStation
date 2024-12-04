@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { toast } from 'sonner'
 
 import { useData } from '@/providers/dataContext'
 import { Data } from '@/types'
@@ -30,8 +31,10 @@ type SimulationStats = {
 
 export const useSimulation = () => {
   const [simulationTime, setSimulationTime] = useState<number>(0)
+  const simulationInterval = useRef<NodeJS.Timeout>()
   const { data, numPumps } = useData()
   const [pumps, setPumps] = useState<PumpState[]>([])
+  const [isSimulating, setIsSimulating] = useState(false)
   const [stats, setStats] = useState<SimulationStats>({
     averageWaitTime: 0,
     pumpUtilization: {},
@@ -83,6 +86,10 @@ export const useSimulation = () => {
         return distribution
       }
 
+      const initialPumpUtilization = Object.fromEntries(
+        Array.from({ length: numPumps }, (_, i) => [i + 1, 0])
+      )
+
       setStats((prev) => ({
         ...prev,
         distributionParams: {
@@ -131,36 +138,63 @@ export const useSimulation = () => {
     return availablePump ? availablePump.id : null
   }
 
+  const updatePumpUtilization = useCallback(() => {
+    setPumps((prevPumps) =>
+      prevPumps.map((pump) => {
+        const utilizationTime =
+          pump.status === 'ocupada' ? pump.occupiedTime : pump.idleTime
+
+        setStats((prevStats) => ({
+          ...prevStats,
+          pumpUtilization: {
+            ...prevStats.pumpUtilization,
+            [pump.id]: utilizationTime / simulationTime,
+          },
+        }))
+
+        return pump
+      })
+    )
+  }, [simulationTime])
+
   const runSimulation = (steps: number) => {
-    for (let i = 0; i < steps; i++) {
-      const {
-        arrivalRate,
-        serviceTimeParams: { mu, sigma },
-      } = stats.distributionParams
+    setIsSimulating(true)
+    let currentStep = 0
 
-      const nextArrival = generateNextArrivalTime(arrivalRate)
-      const serviceTime = generateServiceTime(mu, sigma)
-      const pumpId = findAvailablePump()
-
-      setSimulationTime((prevTime) => prevTime + nextArrival)
-
-      if (pumpId !== null) {
-        setPumps((prevPumps) =>
-          prevPumps.map((pump) =>
-            pump.id === pumpId
-              ? {
-                  ...pump,
-                  status: 'ocupada',
-                  occupiedTime: pump.occupiedTime + serviceTime,
-                }
-              : pump
-          )
+    simulationInterval.current = setInterval(() => {
+      if (currentStep >= steps) {
+        clearInterval(simulationInterval.current)
+        setIsSimulating(false)
+        setPumps((prev) =>
+          prev.map((pump) => ({
+            ...pump,
+            status: 'libre',
+          }))
         )
+        toast.success('Simulacion Terminada')
+
+        return
       }
-    }
+
+      // Actualiza el estado de las bombas aleatoriamente
+      setPumps((prev) =>
+        prev.map((pump) => ({
+          ...pump,
+          status: Math.random() > 0.5 ? 'ocupada' : 'libre',
+          occupiedTime:
+            pump.status === 'ocupada'
+              ? pump.occupiedTime + 1
+              : pump.occupiedTime,
+          idleTime: pump.status === 'libre' ? pump.idleTime + 1 : pump.idleTime,
+        }))
+      )
+
+      setSimulationTime((prev) => prev + 1)
+      currentStep++
+    }, 1000) // Intervalo de 1 segundo
   }
 
-  const initializeSimulation = () => {
+  const initializeSimulation = useCallback(() => {
     setPumps(
       Array.from({ length: numPumps }, (_, index) => ({
         id: index + 1,
@@ -169,8 +203,18 @@ export const useSimulation = () => {
         idleTime: 0,
       }))
     )
+    clearInterval(simulationInterval.current)
     setSimulationTime(0)
-  }
+    setIsSimulating(false)
+
+    // Reiniciar estadísticas de utilización
+    setStats((prev) => ({
+      ...prev,
+      pumpUtilization: Object.fromEntries(
+        Array.from({ length: numPumps }, (_, i) => [i + 1, 0])
+      ),
+    }))
+  }, [numPumps])
 
   return {
     stats,
@@ -179,5 +223,6 @@ export const useSimulation = () => {
     runSimulation,
     initializeSimulation,
     numPumps,
+    isSimulating,
   }
 }

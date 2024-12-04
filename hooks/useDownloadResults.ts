@@ -41,12 +41,6 @@ export const useDownloadReport = () => {
       doc.text('Informe de la Simulación', 105, yPosition, { align: 'center' })
       yPosition += lineHeight * 2
 
-      // Estado de la simulación
-      doc.setFontSize(regularFontSize)
-      doc.setTextColor(0, 0, 0)
-      doc.text('Estado de la Simulación: ', 20, yPosition)
-      yPosition += lineHeight
-
       doc.setFontSize(regularFontSize)
       doc.setTextColor(status === 'completed' ? 0 : 255, 0, 0)
       doc.text(

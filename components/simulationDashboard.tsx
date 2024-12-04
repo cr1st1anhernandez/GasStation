@@ -1,15 +1,7 @@
-import { Button } from '@nextui-org/button'
 import { Card, CardBody, CardFooter, CardHeader } from '@nextui-org/card'
 import { Slider } from '@nextui-org/slider'
-import {
-  Car,
-  Clock,
-  CreditCard,
-  DownloadIcon,
-  Fuel,
-  HomeIcon,
-  PlayIcon,
-} from 'lucide-react'
+import { Spinner } from '@nextui-org/spinner'
+import { Car, Clock, CreditCard, Fuel, PlayIcon } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import {
   Bar,
@@ -20,6 +12,7 @@ import {
   YAxis,
 } from 'recharts'
 
+import DownloadButton from '@/components/downloadButton'
 import { useSimulation } from '@/hooks/useSimulation'
 
 type PumpState = {
@@ -55,6 +48,7 @@ export const SimulationDashboard = () => {
 
   // Using the simulation hook
   const {
+    isSimulationFinished,
     simulationTime,
     stats,
     pumps,
@@ -117,7 +111,11 @@ export const SimulationDashboard = () => {
               onClick={handleStartSimulation}
             >
               {isSimulating ? 'Simulando...' : 'Iniciar'}
-              {isSimulating ? <HomeIcon /> : <PlayIcon />}
+              {isSimulating ? (
+                <Spinner color="white" size="sm" />
+              ) : (
+                <PlayIcon height={12} width={12} />
+              )}
             </button>
             <button
               className="flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-rose-600 px-4 py-2 text-white shadow-md transition-all duration-300 ease-in-out hover:scale-105 hover:bg-rose-500 active:scale-95"
@@ -193,7 +191,7 @@ export const SimulationDashboard = () => {
                   key={pump.id}
                   className={`p-4 rounded-lg  dark:text-gray-900 border ${
                     pump.status === 'ocupada'
-                      ? 'bg-gray-50 border-gray-600 dark:bg-gray-400'
+                      ? 'bg-gray-100 border-gray-600 dark:bg-gray-400'
                       : 'bg-green-50 border-teal-600 dark:bg-green-200'
                   }`}
                 >
@@ -266,10 +264,12 @@ export const SimulationDashboard = () => {
         </div>
       </CardBody>
       <CardFooter className="flex justify-end">
-        <Button isDisabled color="primary">
-          Descargar Informe
-          <DownloadIcon />
-        </Button>
+        <DownloadButton
+          isSimulationFinished={isSimulationFinished}
+          pumps={pumps}
+          simulationTime={simulationTime}
+          stats={stats}
+        />
       </CardFooter>
     </Card>
   )

@@ -35,6 +35,7 @@ export const useSimulation = () => {
   const { data, numPumps } = useData()
   const [pumps, setPumps] = useState<PumpState[]>([])
   const [isSimulating, setIsSimulating] = useState(false)
+  const [isSimulationFinished, setIsSimulationFinished] = useState(false)
   const [stats, setStats] = useState<SimulationStats>({
     averageWaitTime: 0,
     pumpUtilization: {},
@@ -173,9 +174,16 @@ export const useSimulation = () => {
             }),
             {}
           )
+          const totalWaitTime = prev.reduce(
+            (sum, pump) => sum + pump.idleTime,
+            0
+          )
+          const averageWaitTime = totalWaitTime / numPumps
 
           setStats((prevStats) => ({
             ...prevStats,
+            averageWaitTime,
+
             pumpUtilization: utilization,
           }))
 
@@ -188,6 +196,7 @@ export const useSimulation = () => {
         clearInterval(simulationInterval.current)
         setIsSimulating(false)
         toast.success('Simulacion Terminada')
+        setIsSimulationFinished(true)
 
         return
       }
@@ -260,5 +269,6 @@ export const useSimulation = () => {
     initializeSimulation,
     numPumps,
     isSimulating,
+    isSimulationFinished,
   }
 }
